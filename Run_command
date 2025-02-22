@@ -1,0 +1,22 @@
+Conda env to use jupyter lab from mac
+
+1. conda create -n "RL_HanOn3rd" python=3.9
+( going to create a kernel as well) 
+
+
+conda activate RL_HanOn3rd
+pip install install -r Deep-Reinforcement-Learning-Hands-On-Third-Edition/requirements.txt
+pip install ipykernel 
+(RL_HanOn3rd) jimmys@jimmys-mb Reinforcement_learning % which python
+/Users/jimmys/miniconda3/envs/RL_HanOn3rd/bin/python
+python -m ipykernel install --name RL_HanOn3rd --displa-name "RL_HanOn3rd" --user
+
+#jupyter kernelspec install --user <kernel_name> <path_to_python_executable>
+#jupyter kernelspec install --user /Users/jimmys/miniconda3/envs/RL_HanOn3rd  /Users/jimmys/miniconda3/envs/RL_HanOn3rd/bin/python
+
+
+RL_HanOn3rd) jimmys@jimmys-mb Reinforcement_learning % jupyter kernelspec list                                                           
+Available kernels:
+  python3        /Users/jimmys/miniconda3/envs/RL_HanOn3rd/share/jupyter/kernels/python3
+  rl_hanon3rd    /Users/jimmys/Library/Jupyter/kernels/rl_hanon3rd
+
