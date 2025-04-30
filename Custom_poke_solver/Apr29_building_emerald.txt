@@ -1,0 +1,39 @@
+
+
+#Ubuntu what you want 
+sudo apt install build-essential binutils-arm-none-eabi git libpng-dev
+git clean -fx
+
+Otherwise, if agbcc has been built before on the same terminal, run the following commands to install agbcc into pokeemerald:
+
+git clone https://github.com/pret/agbcc
+cd agbcc
+./build.sh
+./install.sh ../../pokeemerald
+
+cd agbcc
+./install.sh ../pokeemerald
+
+agbcc successfully installed!
+
+  > If building agbcc or pokeemerald results in an error, try deleting the agbcc folder and re-installing agbcc as if it has not been built before.
+  
+  
+  cd pokeemerald
+  make 
+  nproc
+  make -j<output of nproc>
+  make compare
+  pokeemerald.gba: OK
+  make modern
+  
+  #devkitARM on Debian 
+  sudo apt install gdebi-core
+  
+  sudo gdebi devkitpro-pacman.amd64.deb
+sudo dkp-pacman -Sy
+sudo dkp-pacman -S gba-dev
+  
+  source /etc/profile.d/devkit-env.sh
+  
+  

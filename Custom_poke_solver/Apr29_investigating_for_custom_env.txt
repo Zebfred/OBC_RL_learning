@@ -1,0 +1,88 @@
+// NOTE: The order of the elements in the 3 arrays below is irrelevant.
+// To reorder the pokedex, see the values in include/constants/pokedex.h.
+
+#define SPECIES_TO_HOENN(name)      [SPECIES_##name - 1] = HOENN_DEX_##name
+#define SPECIES_TO_NATIONAL(name)   [SPECIES_##name - 1] = NATIONAL_DEX_##name
+#define HOENN_TO_NATIONAL(name)     [HOENN_DEX_##name - 1] = NATIONAL_DEX_##name
+
+
+s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *defender, u32 move, u16 sideStatus, u16 powerOverride, u8 typeOverride, u8 battlerIdAtk, u8 battlerIdDef)
+{
+    u32 i;
+    s32 damage = 0;
+    s32 damageHelper;
+    u8 type;
+    u16 attack, defense;
+    u16 spAttack, spDefense;
+    u8 defenderHoldEffect;
+    u8 defenderHoldEffectParam;
+    u8 attackerHoldEffect;
+    u8 attackerHoldEffectParam;
+
+    if (!powerOverride)
+        gBattleMovePower = gBattleMoves[move].power;
+    else
+        gBattleMovePower = powerOverride;
+
+    if (!typeOverride)
+        type = gBattleMoves[move].type;
+    else
+        type = typeOverride & DYNAMIC_TYPE_MASK;
+
+    attack = attacker->attack;
+    defense = defender->defense;
+    spAttack = attacker->spAttack;
+    spDefense = defender->spDefense;
+
+    // Get attacker hold item info
+    if (attacker->item == ITEM_ENIGMA_BERRY)
+    {
+        attackerHoldEffect = gEnigmaBerries[battlerIdAtk].holdEffect;
+        attackerHoldEffectParam = gEnigmaBerries[battlerIdAtk].holdEffectParam;
+    }
+    else
+    {
+        attackerHoldEffect = ItemId_GetHoldEffect(attacker->item);
+        attackerHoldEffectParam = ItemId_GetHoldEffectParam(attacker->item);
+    }
+
+    // Get defender hold item info
+    if (defender->item == ITEM_ENIGMA_BERRY)
+    {
+        defenderHoldEffect = gEnigmaBerries[battlerIdDef].holdEffect;
+        defenderHoldEffectParam = gEnigmaBerries[battlerIdDef].holdEffectParam;
+    }
+    else
+    {
+        defenderHoldEffect = ItemId_GetHoldEffect(defender->item);
+        defenderHoldEffectParam = ItemId_GetHoldEffectParam(defender->item);
+    }
+
+    if (attacker->ability == ABILITY_HUGE_POWER || attacker->ability == ABILITY_PURE_POWER)
+        attack *= 2;
+
+    if (ShouldGetStatBadgeBoost(FLAG_BADGE01_GET, battlerIdAtk))
+        attack = (110 * attack) / 100;
+    if (ShouldGetStatBadgeBoost(FLAG_BADGE05_GET, battlerIdDef))
+        defense = (110 * defense) / 100;
+    if (ShouldGetStatBadgeBoost(FLAG_BADGE07_GET, battlerIdAtk))
+        spAttack = (110 * spAttack) / 100;
+    if (ShouldGetStatBadgeBoost(FLAG_BADGE07_GET, battlerIdDef))
+        spDefense = (110 * spDefense) / 100;
+
+    // Apply type-bonus hold item
+    for (i = 0; i < ARRAY_COUNT(sHoldEffectToType); i++)
+    {
+        if (attackerHoldEffect == sHoldEffectToType[i][0]
+            && type == sHoldEffectToType[i][1])
+        {
+            if (IS_TYPE_PHYSICAL(type))
+                attack = (attack * (attackerHoldEffectParam + 100)) / 100;
+            else
+                spAttack = (spAttack * (attackerHoldEffectParam + 100)) / 100;
+            break;
+        }
+    }
+    
+    
+    
